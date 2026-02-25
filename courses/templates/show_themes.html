@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h1 class="text-center mt-5 mb-3">Выберите тему для изучения</h1>
+<div class="row">
+    <div class="offset-md-4 col-md-4 offset-md-4 col-12">
+        <div class="list-group">
+  {% for theme in themes %} 
+  <a href="{% url 'show_lections' theme.id %}" class="list-group-item list-group-item-action">{{theme.title}}</a>
+ {% endfor %}
+</div>       
+    </div>
+    <!-- /.offset-md-4 col-md-4 offset-md-4 -->
+</div>
+<!-- /.row -->
+ {% endblock %}

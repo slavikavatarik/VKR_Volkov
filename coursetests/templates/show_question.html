@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<h2 class="mt-5 mb-3 text-center">Тест по теме: {{theme.title}}</h1>
+<div class="row">
+  <div class="offset-md-3 col-md-6 offset-md-3 col-12">
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <p class="fs-3"> <span class="fw-bold">Вопрос: </span>  {{q}}</h4>
+    {% if q.qtype == '1' %}
+    <fieldset>
+        <p class="mt-4 fw-bold fs-3" >  Варианты ответа: </p>
+    {% for answer in answers %} 
+        <div class="form-check mt-4">
+        <input class="form-check-input" type="radio" name="ans" id="{{answer.id}}"  value="{{answer.id}}" >
+        <label class="form-check-label fs-4" for="{{answer.id}}">
+         {{answer.atext}}
+        </label>
+      </div>
+    {% endfor %}
+    </fieldset>
+
+    {% else %}
+    <fieldset>
+        <p class="mt-4 fw-bold fs-3" >  Варианты ответа: </p>
+    {% for answer in answers %} 
+        <div class="form-check mt-4">
+        <input class="form-check-input" type="checkbox" name="anw" value="{{answer.id}}" id="{{answer.id}}">
+        <label class="form-check-label fs-4" for="{{answer.id}}">
+          {{answer.atext}}
+        </label>
+      </div>
+    {% endfor %}
+    </fieldset>
+    {% endif %}
+     <button type="submit" class="btn btn-primary mt-4">Ответить</button>
+</form>
+  </div>
+</div>
+ {% endblock %}

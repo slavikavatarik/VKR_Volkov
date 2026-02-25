@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row">
+    <div class="offset-md-4 col-md-4 offset-md-4 col-12">
+        <h3 class="mt-5 mb-3 text-center">Тест закончен.</h1>
+        <h4 class="mb-3 text-center">Тема: {{theme}}</h3>
+        <h3 class="mb-3 text-center">Оценка: {{points}}</h3>
+        <p class="fs-4">Детализацию по вопросам и ответам можно посмотреть в  <a href="{% url 'profile' %}">профиле</a>.</p>
+    </div>
+</div>
+ {% endblock %}

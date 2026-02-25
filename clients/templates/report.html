@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h1 class="text-center mt-5 mb-3">Результаты прохождения тестов </h1>
+<div class="row">
+  <div class="offset-md-4 col-md-4 offset-md-4 col-12">
+<form action="" method="post" class="d-flex justify-content-center align-items-end mb-3">
+    {% csrf_token %}
+ <div>
+      <label class="form-label mt-4">Выберите диапазон: </label>
+      <div class="d-flex">
+            <input type="date" class="form-control" name="startdate">
+            <input style="display: inline-block; margin-left: 10px; margin-right: 10px;" type="date" class="form-control" name="enddate">
+      </div>     
+    </div>
+    <div >
+        <button type="submit" class="btn btn-primary">Пересчитать</button>
+    </div>
+</form>
+  </div>
+</div>
+{% if sd is not None and end is not None %}
+<p class="text-center mt-5 mb-3">Выбранный диапазон: {{sd}}-{{end}}</p>
+{% endif %}
+
+<div class="row">
+<div class="offset-md-3 col-md-6 offset-md-3 col-12">
+<ul class="list-group">   
+  {% for result in results %}
+  <li class="list-group-item d-flex justify-content-between align-items-center fw-bold">
+    {{result.theme}}    
+  </li> 
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    Средняя оценка
+    <span class="badge bg-primary rounded-pill">
+        {% if result.avg_mark.am == None %}
+        0
+        {% else %}
+        {{result.avg_mark.am}}
+        {% endif %}
+    </span>
+  </li> 
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    Среднее количество ошибок
+    <span class="badge bg-primary rounded-pill">{{result.err_amount}}</span>
+  </li> 
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    Среднее количество верных ответов
+    <span class="badge bg-primary rounded-pill">{{result.r_amount}}</span>
+  </li> 
+  {% endfor %}  
+</ul>
+</div>
+</div>
+ {% endblock %}

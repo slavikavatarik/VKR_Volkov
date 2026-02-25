@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <h1 class="text-center text-primary mt-5 mb-3">Изменение данных задачи № {{task.id}}. Проект: {{project.title}}</h1>
+    <div class="row">
+      <div class="offset-md-4 col-md-4 offset-md-4 col-12"> 
+        <form method="post" >
+          {% csrf_token %}
+            <fieldset>
+                <div class="mt-4">
+                    <label class="form-label">Постановка задачи</label>
+                    <textarea required class="form-control" rows="3" name="ttext">{{task.tasktext}}</textarea>
+                </div>
+                <div class="mt-4">
+                    <label class="form-label">Выбрать исполнителя</label>
+                    <select class="form-select" name="wid">
+                        {% for worker in workers %}
+                        {% if task.worker.id == worker.id %}
+                        <option selected value="{{worker.member.id}}">{{worker.member.lname}} {{worker.member.name}}, {{worker.role}}</option>  
+                        {% else %}
+                        <option value="{{worker.member.id}}">{{worker.member.lname}} {{worker.member.name}}, {{worker.role}}</option>  
+                        {% endif %}                        
+                        {% endfor %}      
+                    </select>
+                </div>
+                <div class="mt-4">
+                    <label  class="form-label text-primary">Дата начала исполнения</label>
+                    <input required type="date" class="form-control" name="sd" value='{{task.startdate|date:"Y-m-d"}}'>
+                </div>
+                <div class="mt-4">
+                    <label  class="form-label text-primary">Дата завершения задачи</label>
+                    <input required type="date" class="form-control" name="ed" value='{{task.enddate|date:"Y-m-d"}}'>
+                </div>
+                <div class="mt-4">
+                    <label class="form-label">Статус</label>
+                    <select class="form-select" name="sid">
+                        {% for status in statuses %}
+                        {% if task.status.id == status.id %}
+                        <option selected value="{{status.id}}">{{status.title}}</option>  
+                        {% else %}
+                        <option value="{{status.id}}">{{status.title}}</option>  
+                        {% endif %}                        
+                        {% endfor %}      
+                    </select>
+                </div>
+                <div class="mt-4 d-flex justify-content-between align-items-center">
+                    <button type="submit" class="btn btn-primary">Изменить</button>    
+                    <a class="btn btn-danger" href="{% url 'del_user_task' task.id  %}" >Удалить</a>               
+                </div>            
+            </fieldset>
+        </form>
+      </div>
+      <!-- /.offset-md-4 col-md-4 offset-md-4 col-12 -->
+    </div>
+    <!-- /.row -->
+
+{% endblock %}

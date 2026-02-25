@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h1 class="text-center mt-5 mb-3">Мои проекты</h1>
+{% if project_teams.count == 0 %}
+<h2 class="text-center">Вы не участвуете ни в одном проекте.</h2>
+{% else %} 
+
+<div class="row">
+  <div  class="offset-md-2 col-md-8 offset-md-2 col-12">
+<table class="table table-hover">
+  <thead>
+    <tr class="table-Light">
+      <th scope="col">Название</th>
+      <th scope="col">Дата начала</th>
+      <th scope="col">Дата завершения</th> 
+      <th scope="col"></th>  
+      <th scope="col"></th>        
+    </tr>
+  </thead>
+  <tbody>
+  {% for project_team in project_teams %}
+    <tr>
+      <td>{{project_team.project.title}}</td>
+      <td>{{project_team.project.startdate}} </td>    
+      <td>{{project_team.project.enddate}} </td>    
+      <td> <a download href="{{project_team.project.files_archive.url}}">Файлы</a>  </td> 
+      <td>        
+        <a class="btn btn-primary" href="{% url 'show_user_tasks' project_team.project.id  %}" >Мои задачи</a>           
+    </td>
+    </tr>
+  {% endfor %}
+  </tbody>  
+</table>
+</div>
+</div>
+
+{% endif %}
+ {% endblock %}

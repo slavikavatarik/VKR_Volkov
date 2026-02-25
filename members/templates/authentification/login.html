@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <h1 class="text-center text-primary mt-5 mb-3">Авторизация</h1>
+    <div class="row">
+      <div class="offset-md-4 col-md-4 offset-md-4 col-12">
+        <form method="post" >
+          {% csrf_token %}
+          <fieldset>
+            <div class="form-group">
+              <label  class="form-label text-primary mt-4">Логин</label>
+              <input type="text" class="form-control" name="username" >
+            </div>
+            <div class="form-group">
+              <label  class="form-label text-primary mt-4">Пароль</label>
+              <input type="password" class="form-control" name="password">
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+              <button type="submit" class="btn btn-primary mt-3">Вход</button>
+              <a href="{% url 'register_user' %}" type="submit" class="btn btn-outline-primary mt-3">Регистрация</a>
+            </div>            
+          </fieldset>
+        </form>
+      </div>
+      <!-- /.offset-md-4 col-md-4 offset-md-4 col-12 -->
+    </div>
+    <!-- /.row -->
+
+{% endblock %}

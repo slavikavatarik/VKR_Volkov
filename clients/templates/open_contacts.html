@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h3 class="text-center mt-5 mb-3">Студенты группы: {{group.title}}</h1>
+<div class="row">
+    <div class="offset-md-4 col-md-4 offset-md-4 col-12">
+         <div class="list-group">
+  {% for g_student in g_students %} 
+  <a href="{% url 'open_chat' g_student.id %}" class="list-group-item list-group-item-action">{{g_student.lname}} {{g_student.name}}</a>
+ {% endfor %}
+</div>   
+    </div>
+    <!-- /.offset-md-4 col-md-4 offset-md-4 -->
+</div>
+<!-- /.row -->
+ {% endblock %}

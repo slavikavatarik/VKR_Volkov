@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h1 class="text-center mt-5 mb-3">Выберите тему для проверки знаний</h1>
+<div class="row">
+    <div class="offset-md-4 col-md-4 offset-md-4 col-12">
+        <form action="" method="post">
+            {% csrf_token %}
+            <div>
+      <label class="form-label mt-4">Тема:</label>
+      <select class="form-select" name="theme_id">
+        {% for theme in themes %} 
+        <option value="{{theme.id}}">{{theme.title}}</option>
+        {% endfor %}        
+      </select>
+    </div>
+<button type="submit" class="btn btn-primary mt-4">Выбрать</button>
+        </form> 
+    </div>
+    <!-- /.offset-md-4 col-md-4 offset-md-4 -->
+</div>
+<!-- /.row -->
+ {% endblock %}

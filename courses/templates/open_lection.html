@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="">
+    {{ file_path_json|json_script:"file_path-id" }}    
+</div>
+<h1 class="mt-5 mb-3 text-center">{{lection.title}}</h1>
+<div class="row">
+    <div class="offset-md-1 col-md-10 offset-md-1 col-12 d-flex flex-column justify-content-center align-items-center">
+<div class="top-bar">
+    <button class="btn btn-outline-primary" id="prev-page" >Назад</button>
+    <button class="btn btn-outline-primary" id="next-page" >Вперед</button>
+    <span class="page-info">
+        Страница <span id="page-num"></span> из <span id="page-count"></span>
+    </span>
+</div>
+<canvas id="pdf-render">
+    
+</canvas>
+    </div>    
+</div>
+ {% endblock %}

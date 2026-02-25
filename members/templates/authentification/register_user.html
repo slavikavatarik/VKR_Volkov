@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% if form.errors %}
+<p>Ошибка регистрации!</p>
+{% endif %}
+    <h1 class="text-center text-primary mt-5 mb-3">Регистрация</h1>
+    <div class="row mb-3">
+        <div class="offset-md-4 col-md-4 offset-md-4 col-12">
+    <form action="{% url 'register_user' %}"  method="post" >
+        {% csrf_token %}
+                {{form.as_p}}
+          <div class="d-flex justify-content-between align-items-center">
+              <button type="submit" class="btn btn-primary mt-3">Создать</button>
+              <a href="{% url 'login' %}" type="submit" class="btn btn-outline-primary mt-3">Вход</a>
+            </div>   
+      </form>
+    </div>
+    <!-- /.offset-md-4 col-md-4 offset-md-4 col-12 -->
+  </div>
+  <!-- /.row -->  
+{% endblock %}

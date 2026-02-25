@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <h1 class="text-center text-primary mt-5 mb-3">Изменение статуса задачи № {{task.id}}.</h1>
+    <h1 class="text-center text-primary mt-5 mb-3">Проект: {{project.title}}</h1>
+    <div class="row">
+      <div class="offset-md-4 col-md-4 offset-md-4 col-12"> 
+        <form method="post" >
+          {% csrf_token %}
+            <fieldset> 
+                <div class="mt-4">
+                    <label class="form-label">Статус</label>
+                    <select class="form-select" name="sid">
+                        {% for status in statuses %}
+                        {% if task.status.id == status.id %}
+                        <option selected value="{{status.id}}">{{status.title}}</option>  
+                        {% else %}
+                        <option value="{{status.id}}">{{status.title}}</option>  
+                        {% endif %}                        
+                        {% endfor %}      
+                    </select>
+                </div>
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">Изменить</button>  
+                </div>            
+            </fieldset>
+        </form>
+      </div>
+      <!-- /.offset-md-4 col-md-4 offset-md-4 col-12 -->
+    </div>
+    <!-- /.row -->
+
+{% endblock %}

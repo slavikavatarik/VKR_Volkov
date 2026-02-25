@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h5 class="text-center mt-5 mb-3">Чат</h5>
+
+<div class="row">
+    <div class="offset-md-3 col-md-6 offset-md-3 col-12">
+        <div class="card border-primary mb-3" style="height: 300px; overflow-y: auto;">            
+            <div class="card-body">
+              {% for mess in cl_messages %} 
+              {% if mess.sender.user.id == id  %}                
+              <p class="card-text text-end">
+                {{ mess.mtext }}   
+                {% if mess.docfile != None and mess.docfile != '' %}
+              <a download href="{{mess.docfile.url}}">Файл</a>
+              {% endif%}
+               </p>
+              {% else %} 
+              <p class="card-text">
+                {{ mess.mtext }}
+                {% if mess.docfile != None and mess.docfile != '' %}
+              <a download href="{{mess.docfile.url}}">Файл</a>
+              {% endif%}
+               </p>
+              {% endif %}  
+              {% endfor %}  
+            </div> 
+          </div>
+          <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mt-4">
+                <label  class="form-label mt-4">Введите сообщение</label>
+                <textarea required class="form-control" name="mess" rows="3"></textarea>
+            </div>
+            <div class="mt-4">
+              <input class="form-control" type="file" name="myfile" />
+            </div>
+            <button type="submit" class="btn btn-primary mt-4">Отправить</button>
+        </form>
+    </div>
+    <!-- /.col-md-10 col-12 -->   
+</div>
+<!-- /.row -->
+{% endblock %} 

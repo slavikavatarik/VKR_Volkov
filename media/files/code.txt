@@ -1,0 +1,151 @@
+import datetime
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.utils import timezone
+from tours.models import Client as vtae_Client, FeedBack as vtae_FeedBack, TourTimeTable as vtae_TourTimeTable, City as vtae_City, Country as vtae_Country, Tour as vtae_Tour
+from django.db.models import Q
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import Group as vtae_Group
+from .forms import RegisterUserForm as vtae_RegisterUserForm
+
+
+def vtae_profile(vtae_request):
+    if vtae_request.user is not None:
+        vtae_user = vtae_request.user
+        vtae_client = vtae_Client.objects.filter(user_id=vtae_request.user.id)[0]
+        vtae_regs = vtae_TourTimeTable.objects.filter(clients__id=vtae_client.id).order_by('-start')
+        if vtae_request.method == "POST":
+            vtae_ln = vtae_request.POST["lname"]
+            vtae_n = vtae_request.POST["name"]
+            vtae_ph = vtae_request.POST["phone"]
+            vtae_client.lname = vtae_ln
+            vtae_client.name = vtae_n
+            vtae_client.phone = vtae_ph
+            vtae_client.save()
+            messages.success(vtae_request, ("Данные изменены."))
+            return render(vtae_request, 'profile.html', {'client': vtae_client, 'regs': vtae_regs})
+        else:
+            return render(vtae_request, 'profile.html', {'client': vtae_client, 'regs': vtae_regs})
+    else:
+        return redirect('login')
+
+
+def vtae_add_order(vtae_request, vtae_t_id):
+    if vtae_request.user.is_authenticated:
+        vtae_tt = vtae_TourTimeTable.objects.get(pk=vtae_t_id)
+        vtae_tour_id = vtae_tt.tour.id
+        if vtae_tt.end <= timezone.now():
+            messages.success(vtae_request, ("Мероприятие уже закончено."))
+        else:
+            vtae_user = vtae_request.user
+            vtae_client = vtae_Client.objects.filter(user_id=vtae_user.id)[0]
+            vtae_is_signed = False
+            for vtae_member in vtae_tt.clients.all():
+                if vtae_member.id == vtae_client.id:
+                    vtae_is_signed = True
+                    break
+            if not vtae_is_signed:
+                vtae_tt.clients.add(vtae_client)
+                vtae_tt.save()
+                messages.success(vtae_request, ("Вы подали заявку на экскурсию. Дождитесь звонка менеджера."))
+            else:
+                messages.success(vtae_request, ("Вы уже записаны на данное мероприятие."))
+        vtae_fbs = vtae_FeedBack.objects.filter(tour_id=vtae_tt.tour.id)
+        vtae_tts = vtae_TourTimeTable.objects.filter(Q(tour_id=vtae_tt.tour.id) & Q(end__gte = datetime.datetime.now())).order_by('start')
+        return render(vtae_request, 'show_tour_info.html', {'tour': vtae_tt.tour, 'tt': vtae_tts, 'fbs': vtae_fbs})
+    else:
+        return redirect('login')
+
+
+def vtae_cancel(vtae_request, vtae_r_id):
+    vtae_timetable_row = vtae_TourTimeTable.objects.get(pk=vtae_r_id)
+    vtae_user = vtae_request.user
+    vtae_client = vtae_Client.objects.filter(user_id=vtae_request.user.id)[0]
+    vtae_timetable_row.clients.remove(vtae_client)
+    vtae_timetable_row.save()
+    messages.success(vtae_request, ("Запись отменена."))
+    return redirect('profile')
+
+
+def vtae_login_user(vtae_request):
+    if vtae_request.method == "POST":
+        vtae_username = vtae_request.POST['username']
+        vtae_password = vtae_request.POST['password']
+        vtae_user = authenticate(request=vtae_request, username=vtae_username, password=vtae_password)
+        if vtae_user is not None:
+            login(vtae_request, vtae_user)
+            if vtae_user.is_superuser:
+                return redirect('/admin/')
+            else:
+                return redirect('index')
+        else:
+            messages.success(vtae_request, ("Ошибка авторизации"))
+            return redirect('login')
+    else:
+        return render(vtae_request, 'authentification/login.html', {})
+
+
+def vtae_register_user(vtae_request):
+    if vtae_request.method == "POST":
+        vtae_form = vtae_RegisterUserForm(vtae_request.POST)
+        if vtae_form.is_valid():
+            vtae_form.save()
+            vtae_username = vtae_form.cleaned_data['username']
+            vtae_password = vtae_form.cleaned_data['password1']
+            vtae_user = authenticate(username=vtae_username, password=vtae_password)
+            vtae_client = vtae_Client(lname=' ', name=' ', phone=' ', user=vtae_user)
+            vtae_client.save()
+            login(vtae_request, vtae_user)
+            messages.success(vtae_request, ("Вы зарегистрированы."))
+            return redirect('home')
+    else:
+        vtae_form = vtae_RegisterUserForm()
+    return render(vtae_request, 'authentification/register_user.html', {'form': vtae_form})
+
+
+def vtae_logout_user(vtae_request):
+    logout(vtae_request)
+    messages.success(vtae_request, ("Выход из учетной записи"))
+    return redirect('login')
+
+
+def vtae_index(vtae_request):
+    return render(vtae_request, 'index.html', {})
+
+
+def vtae_choose_place(vtae_request):
+    vtae_countries = vtae_Country.objects.all()
+    if vtae_request.method == "POST":
+            vtae_fchoose = vtae_request.POST.get('fchoose', False)
+            vtae_fsearch = vtae_request.POST.get('fsearch', False)
+            if vtae_fchoose == "0" and not vtae_fsearch:
+                 messages.success(vtae_request, ("Укажите данные для поиска!"))
+                 return render(vtae_request, 'countries.html', {'countries': vtae_countries})
+            elif vtae_fchoose != "0" and vtae_fsearch:
+                 vtae_country = vtae_Country.objects.get(pk=vtae_fchoose)
+                 vtae_cities = vtae_City.objects.filter(Q(country_id=vtae_country.id) & Q(title__icontains=vtae_fsearch))
+                 vtae_tours = vtae_Tour.objects.filter(Q(city__country_id=vtae_country.id) & Q(title__icontains=vtae_fsearch))
+                 return render(vtae_request, 'search.html', {'cities': vtae_cities, 'tours': vtae_tours})
+            elif vtae_fchoose != "0" and  not vtae_fsearch:
+                 vtae_country = vtae_Country.objects.get(pk=vtae_fchoose)
+                 vtae_cities = vtae_City.objects.filter(country_id=vtae_country.id)
+                 vtae_tours = vtae_Tour.objects.filter(city__country_id=vtae_country.id)
+                 return render(vtae_request, 'search.html', {'cities': vtae_cities, 'tours': vtae_tours})
+            elif vtae_fchoose == "0" and vtae_fsearch:
+                 vtae_cities = vtae_City.objects.filter(title__icontains=vtae_fsearch)
+                 vtae_tours = vtae_Tour.objects.filter(title__icontains=vtae_fsearch)
+                 return render(vtae_request, 'search.html', {'cities': vtae_cities, 'tours': vtae_tours})
+    return render(vtae_request, 'countries.html', {'countries': vtae_countries})
+
+
+def vtae_show_tours(vtae_request, vtae_c_id):
+     vtae_city = vtae_City.objects.get(pk=vtae_c_id)
+     vtae_tours = vtae_Tour.objects.filter(city_id=vtae_c_id)
+     return render(vtae_request, 'show_tours.html', {'tours': vtae_tours, 'city': vtae_city})
+
+
+def vtae_show_tour_info(vtae_request, vtae_t_id):
+     vtae_tour = vtae_Tour.objects.get(pk=vtae_t_id)
+     vtae_tt = vtae_TourTimeTable.objects.filter(Q(tour_id=vtae_t_id) & Q(end__gte = datetime.datetime.now())).order_by('start')
+     vtae_fbs = vtae_FeedBack.objects.filter(tour_id=vtae_t_id)
+     return render(vtae_request, 'show_tour_info.html', {'tour': vtae_tour, 'tt': vtae_tt, 'fbs': vtae_fbs})

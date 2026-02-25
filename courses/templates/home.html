@@ -1,0 +1,26 @@
+{% extends 'base_start.html' %}
+{% load static %}
+
+{% block content %} 
+
+<div  style="position: relative;">
+    <img class="w-100" src="{% static 'images/banner.png' %}" alt="">
+    <div style="position: absolute; top: 100px; left: 50%; transform: translateX(-50%);" >
+        <h2 class="text-white text-center">Платформа для коллективного обучения</h2>
+        <h2 class="text-white text-center">и групповых проектов</h2>
+    </div>
+    <div class="d-flex justify-content-between align-items-center" style="width: 300px; position: absolute; top: 300px; left: 50%; transform: translateX(-50%);">
+        {% if user.is_authenticated %} 
+            {% if not user.is_superuser and not user.groups.all.0.name == "employees" %} 
+            <a class="btn btn-primary" href="{% url 'courses' %}">Выбрать курс</a>
+            {% endif %}  
+        {% else %}
+        <a class="btn btn-primary" href="{% url 'login' %}">Войти</a>
+        {% endif %}  
+        <a class="btn btn-outline-primary" href="{% url 'about' %}">О платформе</a>
+
+    </div>
+</div>
+
+
+ {% endblock %}

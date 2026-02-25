@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h1 class="text-center mt-5 mb-3">Задачи проекта</h1>
+
+<div class="row">
+    <div  class="offset-md-2 col-md-8 offset-md-2 col-12">
+    <a class="btn btn-light" href="{% url 'add_user_task' project.id  %}" >Создать задачу</a>     
+<table class="table table-hover">
+  <thead> 
+    <tr class="table-Light">      
+      <th scope="col">Дата начала</th>
+      <th scope="col">Дата завершения</th> 
+      <th scope="col">Исполнитель</th>
+      <th scope="col">Текст</th>
+      <th scope="col">Статус</th>  
+      <th scope="col"></th>  
+    </tr>
+  </thead>
+  <tbody>
+  {% for p_task in p_tasks %}
+    <tr>
+      <td>{{p_task.startdate}}</td>
+      <td>{{p_task.enddate}} </td>    
+      <td>{{p_task.worker}} </td>     
+      <td>{{p_task.tasktext}}</td>
+      <td>{{p_task.status}}</td>
+      <td><a href="{% url 'edit_user_task' p_task.id project.id  %}" >Изменить данные задачи</a> </td>
+    </tr>
+  {% endfor %}
+  </tbody>  
+</table>
+</div>
+</div>
+ {% endblock %}

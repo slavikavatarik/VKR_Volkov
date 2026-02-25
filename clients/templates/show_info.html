@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h1 class="mt-5 mb-3 text-center">Результат теста</h1>
+<h2 class="mb-3 text-center">Тема: {{attempt.theme}}</h2>
+<p class="mb-3 text-center fs-4">Дата прохождения: {{attempt.adate}}</p>
+
+<div class="row">
+  <div class="offset-md-2 col-md-8 offset-md-2 col-12">
+<table class="table table-hover">
+  <thead>
+    <tr class="table-Light">
+      <th scope="col">Вопрос</th>
+      <th scope="col">Ответ</th>   
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for row in rows %}
+    <tr>
+      <td>{{row.question}}</td>
+      <td>
+        {% for answ in row.answers %}
+        <p>
+            <span style="display: inline-block; width: 150px;">{{answ.atext}} </span> 
+            {% if answ.status %}
+            <img style="width: 30px;" src="{% static 'images/right.png' %}" alt="">
+            {% else %}
+            <img style="width: 30px;" src="{% static 'images/wrong.png' %}" alt="">
+            {% endif %}             
+        </p>        
+        {% endfor %}
+    </td> 
+    <td>
+      
+    </td>  
+    </tr>
+  {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+        <td class="text-end" colspan="2">Оценка: {{attempt.mark}}</td>
+    </tr>
+  </tfoot>  
+</table>
+  </div>
+</div>
+ {% endblock %}
